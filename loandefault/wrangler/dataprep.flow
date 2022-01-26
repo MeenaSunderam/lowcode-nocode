@@ -1,0 +1,289 @@
+{
+  "metadata": {
+    "version": 1,
+    "disable_limits": false
+  },
+  "nodes": [
+    {
+      "node_id": "8a774511-1ba4-450e-b4e5-82b20ec1b628",
+      "type": "SOURCE",
+      "operator": "sagemaker.s3_source_0.1",
+      "parameters": {
+        "dataset_definition": {
+          "__typename": "S3CreateDatasetDefinitionOutput",
+          "datasetSourceType": "S3",
+          "name": "loanspart1.csv",
+          "description": null,
+          "s3ExecutionContext": {
+            "__typename": "S3ExecutionContext",
+            "s3Uri": "s3://sagemaker-us-east-1-247385444016/loandefault/data/loanspart1.csv",
+            "s3ContentType": "csv",
+            "s3HasHeader": true,
+            "s3FieldDelimiter": ",",
+            "s3DirIncludesNested": false,
+            "s3AddsFilenameColumn": false
+          }
+        }
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "default",
+          "sampling": {
+            "sampling_method": "sample_by_limit",
+            "limit_rows": 50000
+          }
+        }
+      ]
+    },
+    {
+      "node_id": "eca12b14-c1a6-4479-bd62-0815d7d001c1",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.infer_and_cast_type_0.1",
+      "parameters": {},
+      "trained_parameters": {
+        "schema": {
+          "id": "long",
+          "loan_status": "string",
+          "loan_amount": "long",
+          "funded_amount_by_investors": "float",
+          "loan_term": "long",
+          "interest_rate": "float",
+          "installment": "float",
+          "grade": "string",
+          "sub_grade": "string",
+          "verification_status": "string",
+          "issued_on": "date",
+          "purpose": "string",
+          "dti": "float",
+          "earliest_credit_line": "date",
+          "inquiries_last_6_months": "long",
+          "open_credit_lines": "long",
+          "derogatory_public_records": "long",
+          "revolving_line_utilization_rate": "float",
+          "total_credit_lines": "long"
+        }
+      },
+      "inputs": [
+        {
+          "name": "default",
+          "node_id": "8a774511-1ba4-450e-b4e5-82b20ec1b628",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "1935754a-406f-4bdd-946c-3cdc86ff0b12",
+      "type": "SOURCE",
+      "operator": "sagemaker.s3_source_0.1",
+      "parameters": {
+        "dataset_definition": {
+          "__typename": "S3CreateDatasetDefinitionOutput",
+          "datasetSourceType": "S3",
+          "name": "loanspart2.csv",
+          "description": null,
+          "s3ExecutionContext": {
+            "__typename": "S3ExecutionContext",
+            "s3Uri": "s3://sagemaker-us-east-1-247385444016/loandefault/data/loanspart2.csv",
+            "s3ContentType": "csv",
+            "s3HasHeader": true,
+            "s3FieldDelimiter": ",",
+            "s3DirIncludesNested": false,
+            "s3AddsFilenameColumn": false
+          }
+        }
+      },
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "default",
+          "sampling": {
+            "sampling_method": "sample_by_limit",
+            "limit_rows": 50000
+          }
+        }
+      ]
+    },
+    {
+      "node_id": "ebd65038-ef92-45e0-8f95-ec1445133c0b",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.infer_and_cast_type_0.1",
+      "parameters": {},
+      "trained_parameters": {
+        "schema": {
+          "id": "long",
+          "employment_length": "float",
+          "employer_title": "string",
+          "home_ownership": "string",
+          "annual_income": "float"
+        }
+      },
+      "inputs": [
+        {
+          "name": "default",
+          "node_id": "1935754a-406f-4bdd-946c-3cdc86ff0b12",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "73f24fef-88d4-4c91-a60d-58bd8bf80f02",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.join_tables_0.1",
+      "name": "consolidated-data",
+      "parameters": {
+        "left_column": "id",
+        "right_column": "id",
+        "join_type": "inner"
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "ebd65038-ef92-45e0-8f95-ec1445133c0b",
+          "output_name": "default"
+        },
+        {
+          "name": "df",
+          "node_id": "eca12b14-c1a6-4479-bd62-0815d7d001c1",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "1cc8237d-49f3-466e-8178-be2e5bdc07de",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.manage_columns_0.1",
+      "parameters": {
+        "operator": "Drop column",
+        "drop_column_parameters": {
+          "column_to_drop": [
+            "id_0",
+            "id_1"
+          ]
+        }
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "73f24fef-88d4-4c91-a60d-58bd8bf80f02",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "4fbcfa08-f9e5-4a78-b0d3-9377e41b77da",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.encode_categorical_0.1",
+      "parameters": {
+        "operator": "One-hot encode",
+        "one_hot_encode_parameters": {
+          "invalid_handling_strategy": "Keep",
+          "drop_last": false,
+          "output_style": "Columns",
+          "input_column": [
+            "home_ownership"
+          ]
+        },
+        "ordinal_encode_parameters": {
+          "invalid_handling_strategy": "Replace with NaN"
+        }
+      },
+      "trained_parameters": {
+        "one_hot_encode_parameters": {
+          "_hash": -1767228197713558300,
+          "string_indexer_model": "P)h>@6aWAK2mn2ZI#fVLy7uD$003+O000vJ003=ebYWy+bYU-WVRCdWFfcGMFny0rPs1<_hVT50oV%!HbXs?X%MQ~ffw)#Cao1@1!byNJ^}l0^gai`YtoP%weG$q+N@61d9VJ9iBgzzkPSRO9Aml<Q?=u;H+<J{~NV}lXib`bTFlBI2Y?{^0^14~I&AREjO3eL7q-26;@>15aUVwY|i<*1IXcm7U`}zsiL)*ciTi^)y!R>&_7cqj@7PtNd>|8t{MvfRCOTG=3l`%N%!>i|oqxtkg$=_y17kkCyR0)j(6q^tK(2*z*Bhq}{o;1?KIU+j);d4Q+&Ucv9uO)v!)AwIFF-=z=P)h>@6aWAK2mn2ZI#hEObWRQc000aC000;O003=ebYWy+bYU+paA9(EEif=JFfcA-a$`#_N@ieSU}E^T%gq4*P)h>@6aWAK2mn2ZI#j?D%<ZHB005o>002k;003lRbYU-WVRCdWFfcGMFfC*`Wo2PDGcYYRI503RG&4CgEnzlhGA%Y^GGt{lHe+KrIAJYgFfcGKb8ca9aCt6pVRCVGWps^FT~FIE6m>!<5$mffN6JHGR0L9IB})ly;e|JZ5JG4Vlh8CdjZ>mIPO)7OLj6Dc6%%j#EpBPc$Ht_+SofZDu8+@^&yOx*jPMP%UAzfJ12@7H?RZ)!OZ=+VcFe~DA#@O~!MXO!^_&gAx<rnDIM?_9u2jy}X??5K0jcek&>j@3Rsy?$JZ_o^*FS%l(Uqt;cF~?oK1rSlX^yn!ci6=ZwC52|mc}mV4IxDZ4u4X(*?A>92({cG48m<c#Lb|C8o{@>_dXA;#P1sHwl-T2PV2X`?H_)SI0#`I2>ieSWG)K2gw%S>_=H0U_MC^^2yMz*k@bW{EJ9@WFNL|542tWiuuRvttP+;z+;Z~h+*5lu5p+n6)zgusU0Rev=7tV0@2TR|oO+W5_=WyujxXV5q_6+M&b>-C26$8}%S&a>rc%-&yg<zU0V-&CCdC5i(p3cTn$5n?5II=}{9NhwawF}S#Sx3!JK409c{?fwdC^O9Q50FfU*!8mKTXp-P0~T!?|n&<sOY6xKG+Sy5H_B`+Rx!<J^@fm0|XQR000O8J%~C~hnYT95&!@I5C8xGO#lD@WMOn+FD`Ila&#>)FfcGMEo3=mWnnfmFfBDWFfc7NGdVOZVK!zmEjD8^WMwlpV`DftVJ%}YFfcB2Zeeh6c`k5aa&dKKbS`6ZV@obdW?*1oVpvq3GX2Av`cwc=O928D0~7!N00;m*h&oh2M!NRn0001N0RR9K00000000000001_fdBvi0BvP-VPs)+VJ~oDa&#>)FfcGMP)h*<6ay3h000O8J%~C~a~5<?4gdfE3;+NC7ytkO0000000000q=6Ix003=ebYWy+bYU+paA9(EEif=JFfcA-a$`_S0Rj{Q6aWAK2mn2ZI#j?D%<ZHB005o>002k;0000000000005+cSOEY4WMOn+FK}UUbS*G2FfcGJWI1JJVKy@`Ej2hWFfBAQIW#R{HfAy{He)hmWivKoV>mcrEn_e+FfMa$VQ_GHE^uLTadl;MP)h*<6ay3h000O8J%~C~hnYT95&!@I5C8xGO#lD@0000000000q=8}s003lRbYU+paA9(EEif=JFfc7-Ib~&GHZw3SH8?OZEi^MZG%aB^W-=`{V=`oAGd5#mI5=S~V=yo<E^}^SaBz7paA9(Bb!BueV{&6qO9ci10000400aPd0RRBs0{{R300",
+          "one_hot_encoder_model": "P)h>@6aWAK2mn2ZI#hH6NQ2V=003zL000vJ003=ebYWy+bYU-WVRCdWFfcGMFpZ8)O9L?whVTB2Id8+J(PH;1f`Ua)Uc)py+b-sd$;5+Y|GTlG;Gy7U4lnQX%zFaou@o2}@j+omcO+FZ@|y}?O@vaJ)N`bVB=^y!k$BgRhYn;8R0KnYL2s_jT5oRjc5QSAXa1GA%qcdrQN8L{7(U{vZ(N<n7XDFMG`D8jYlr*o)GCd~u)}6PL8_9g+$G;2D-^PI$=ff{5##9TF}|ZeD~UOA%STT635&omp)b_I9DfZz0$5s)CahjwE<C%u(Aw|bzcvV0T9&I%P)h>@6aWAK2mn2ZI#iafZwL+m000aC000;O003=ebYWy+bYU+paA9(EEif=JFfcA-a$`#_N@ieSU}9+YU@idwP)h>@6aWAK2mn2ZI#i86)1ra_001xo002k;003lRbYU-WVRCdWFfcGMFfBM@G&W&5G-WL|WHU1@G%#W_EjTqeIW1x_Gh#P5G-P8pH!>|_FfcGKb8ca9aCt6pVRCVGWpsT~U2EGg6jjvB>qGa@2N@as5Cjb^xWb+j*9m=S-%2SXY<nAHD6!O;$#x<sD`^|(&*%^A59v*lj)g)cxZIC(?mbs%bpACVh%nNP2nNR^UP#*>LTGJ$bogHcXa5X?-GK`hqg9sR;Ob(}PKEjN%T9jFN)U|tn0}fFC$Af`_*ULZ3++ABZ_~CetpfnT2Z(-@T2``l$j3n#gx%c`njIi7$hXNaq*pM(KKAeZhgNs@^c}512>Za8Rps8tD2OO+%rzHN0V4T}UjA1aTQ)WQkn)(vh#tK`*qP?w%;wT@)7<b%I#CEG=ws`Sxy4knA+yfRCyqr-l~Na$4S(FRT2!mj)*66VGyXA!F=7Gf&1&D**|G+bG?1S(wG(A+zs$8}LnXA8%ZSwwiLnMK43-gl)dY=~%b!a`FE@&hE7RGm*hzR2^Q3b)o|n4l#A;BeURp?{#(A!a6P0IKR%B^5Nb=t2G>ug+8yAD4APnIJpIQiw;IBLbP)h>@6aWAK2mn2ZI#iL8oXipc000mG002z@003lRbYU+paA9(EEif=JFfc7RVl*~kIW%Q0He@q1Ei^D<Gc7nZI5{n1F*9N}I5cEqH#agZV=yo<E^}^SaBz7paA9(Bb!BueV{&6lE=p!#U|?cMUvTo*xqnt>08mQ-0u%!j0000806mC0RCEJKgVO*20BHdL022TJ00000000000HlEc0001OWprU=VRT_HaA9(EEif=JFfdR{0Rj{Q6aWAK2mn2ZI#iafZwL+m000aC000;O0000000000005+c1OWg5ZDn*}WMOn+FD`Ila&#>)FfcGME@N_IP)h*<6ay3h000O8J%~C~jX%?(f&l;kFaiJoNB{r;0000000000q=85Q003lRbYU-WVRCdWFfcGMFfBM@G&W&5G-WL|WHU1@G%#W_EjTqeIW1x_Gh#P5G-P8pH!>|_FfcGKb8ca9aCt6pVRCVGWpq$W0Rj{Q6aWAK2mn2ZI#iL8oXipc000mG002z@0000000000005+cFarPpWMOn+FD`Ila&#>)FfcGMEjVH{Heoq5Wi2*jGczqTFk&+;I5jvqEn+b<VmCN6WMelsGA&~;FfcB2Zeeh6c`k5aa&dKKbS`6ZV^B*41^@s600aO80C)ia0IdT60000"
+        }
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "1cc8237d-49f3-466e-8178-be2e5bdc07de",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "c298be85-84d7-4c65-ae24-bf36b343635a",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.manage_columns_0.1",
+      "parameters": {
+        "operator": "Drop column",
+        "drop_column_parameters": {
+          "column_to_drop": [
+            "employer_title"
+          ]
+        }
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "4fbcfa08-f9e5-4a78-b0d3-9377e41b77da",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    },
+    {
+      "node_id": "e6203693-b674-4596-b451-908e7c2ed6f1",
+      "type": "TRANSFORM",
+      "operator": "sagemaker.spark.encode_categorical_0.1",
+      "parameters": {
+        "operator": "One-hot encode",
+        "one_hot_encode_parameters": {
+          "invalid_handling_strategy": "Keep",
+          "drop_last": false,
+          "output_style": "Columns",
+          "input_column": [
+            "purpose",
+            "verification_status"
+          ]
+        },
+        "ordinal_encode_parameters": {
+          "invalid_handling_strategy": "Replace with NaN"
+        }
+      },
+      "inputs": [
+        {
+          "name": "df",
+          "node_id": "c298be85-84d7-4c65-ae24-bf36b343635a",
+          "output_name": "default"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "default"
+        }
+      ]
+    }
+  ]
+}
