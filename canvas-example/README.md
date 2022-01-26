@@ -12,7 +12,7 @@ SageMaker Canvas UserInterface provide you with 2 key functionalities
 
 ![image](https://user-images.githubusercontent.com/7538839/151233690-e2314bdf-63bd-401a-85db-60c7776121a3.png)
 
-### Building a Model in Canvas
+## Load the Data Sets
 
 1.  Click on Datasets -> Import
 
@@ -22,9 +22,13 @@ SageMaker Canvas UserInterface provide you with 2 key functionalities
 
 ![image](https://user-images.githubusercontent.com/7538839/151234607-4df4dc81-3430-4e98-9d44-5b1fa4944db8.png)
 
+## Create New Model
+
 3.  Click on Models -> New Model. Provide a name for the model.  Now you will be able to add datasets to the Model
 
 ![image](https://user-images.githubusercontent.com/7538839/151234847-2601d5e5-2041-40d6-b9ce-bc96715669b8.png)
+
+## Prepare Data
 
 4.  Data Preparation on Canvas is currently limited.  You can however select columns, filter data or join multiple datasets in Canvas.  
     a.  You can view the data distribution 
@@ -35,6 +39,8 @@ SageMaker Canvas UserInterface provide you with 2 key functionalities
     For any data preparation activities, a model recipe gets created.  
 
 ![image](https://user-images.githubusercontent.com/7538839/151235437-a3619938-ff3d-4fa6-a26f-ea76b5a05f61.png)
+
+## Build Model
 
 5.  Once the data is prepared, it is time to build the model.  
     a.  Select the target variable (in this case - "Churn")
@@ -47,4 +53,4 @@ SageMaker Canvas UserInterface provide you with 2 key functionalities
 
 ![image](https://user-images.githubusercontent.com/7538839/151236576-12e079a3-eead-4240-9c33-14f388c50595.png)
 
-
+## Do inference - Batch / Real Time
