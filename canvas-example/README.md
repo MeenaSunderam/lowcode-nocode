@@ -53,4 +53,17 @@ SageMaker Canvas UserInterface provide you with 2 key functionalities
 
 ![image](https://user-images.githubusercontent.com/7538839/151236576-12e079a3-eead-4240-9c33-14f388c50595.png)
 
+Once the Model training is complete, you will be able to analyze the model.  This helps in building a level of confidence on the model training.
+    a.  Model prediction status / accuracy
+    b.  Feature importance - which features has the most impact on prediction
+    c.  Confusion Matrix (given this is a classification problem)
+ 
+ ![image](https://user-images.githubusercontent.com/7538839/151245853-e36c6e63-0708-4de4-afe5-558efb27c1af.png)
+
+
 ## Do inference - Batch / Real Time
+
+7.  The Model can be tested in Canvas before it is hosted as a real time inference end point (in short - operationalizing model using MLOps)
+
+![image](https://user-images.githubusercontent.com/7538839/151246131-90c72338-1f02-464f-9547-1fe98963475a.png)
+
